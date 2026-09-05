@@ -175,6 +175,28 @@ footer{
   .routes,.ext-grid,.info{grid-template-columns:1fr}
   header h1{font-size:26px}
   .stop{grid-template-columns:48px 1fr}
+  /* 窄屏下把导览表格由横向四列改为竖向堆叠的卡片，让照片能占满整行 */
+  table.inner{display:block;background:none;border:0;margin-top:16px}
+  table.inner tbody{display:block}
+  table.inner tr{
+    display:block;background:var(--card);border:1px solid var(--line);
+    margin-bottom:14px;
+  }
+  table.inner tr:first-child{display:none}
+  table.inner td{
+    display:block;width:auto;border:0;
+    border-bottom:1px dashed var(--line);padding:12px 14px;
+  }
+  table.inner td:last-child{border-bottom:0}
+  table.inner td.hall{
+    background:#f7f0e0;font-size:16px;white-space:normal;
+    border-bottom:1px solid var(--line);
+  }
+  table.inner td.hall br{display:none}
+  table.inner td.ph{width:auto;padding:0;background:var(--card)}
+  .ph img{height:210px;border:0;border-bottom:1px solid var(--line)}
+  .ph .slot{height:150px}
+  .star{display:inline;margin-left:6px}
 }
 </style>
 </head>
