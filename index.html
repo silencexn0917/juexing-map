@@ -61,6 +61,49 @@ header .meta span{margin:0 10px;white-space:nowrap}
 .legend i.ext{background:#8a7f6d}
 .legend i.ref{background:#cfe3d4;border:1px solid #a9c4b0;border-radius:2px}
 
+/* 可点击点位与气泡卡片 */
+.pin{cursor:pointer}
+.pin:hover circle,.pin:focus circle{stroke:#c8a35a;stroke-width:5}
+.pin.active circle{stroke:#c8a35a;stroke-width:6}
+.pin:focus{outline:none}
+.maphint{
+  margin-top:12px;font-size:13px;color:#8a7f6d;text-align:center;
+  border-top:1px dashed var(--line);padding-top:12px;
+}
+.maphint b{color:var(--brick);font-weight:600}
+.bubble{
+  display:none;position:absolute;z-index:20;width:270px;
+  background:#fff;border:1px solid var(--line);border-top:3px solid var(--brick);
+  box-shadow:0 8px 28px rgba(60,45,30,.22);padding:14px 16px 16px;
+}
+.bubble.on{display:block}
+.bubble .bt{font-size:11px;color:#8a7f6d;letter-spacing:.08em}
+.bubble h4{margin:2px 0 6px;font-size:16px;line-height:1.4;color:var(--ink);padding-right:18px}
+.bubble .addr{font-size:11px;color:#8a7f6d;margin-bottom:9px;line-height:1.6}
+.bubble img{
+  width:100%;height:165px;object-fit:cover;object-position:center 48%;display:block;
+  border:1px solid var(--line);background:#f2ece0;margin-bottom:8px;
+}
+.bubble .cap{font-size:11px;color:#6f6559;margin:-4px 0 8px;line-height:1.5}
+.bubble .noshot{
+  font-size:11.5px;color:#8a7f6d;border:1px dashed var(--line);background:#fbf6ea;
+  padding:10px 12px;margin-bottom:9px;line-height:1.7;text-align:center;
+}
+.bubble .lead{font-size:12.5px;line-height:1.85;color:#3f3a33}
+.bubble .more{
+  display:inline-block;margin-top:9px;font-size:12px;color:var(--brick);
+  text-decoration:none;border-bottom:1px solid rgba(158,42,43,.35);
+}
+.bubble .close{
+  position:absolute;top:8px;right:9px;width:20px;height:20px;line-height:17px;
+  font-size:15px;color:#8a7f6d;background:none;border:none;cursor:pointer;padding:0;
+}
+.bubble .close:hover{color:var(--brick)}
+.bubble.below{width:auto;left:12px;right:12px}
+@media print{
+  .bubble,.maphint{display:none !important}
+}
+
 .stops{margin-top:28px;display:flex;flex-direction:column;gap:18px}
 .stop{
   background:var(--card);border:1px solid var(--line);
@@ -245,6 +288,7 @@ footer{
     <text x="470" y="62" font-size="13" fill="#8a7f6d" text-anchor="middle">
       示意图 · 点位相对方位依实际地理绘制，比例经简化</text>
   </svg>
+  <div class="bubble" id="mapBubble" role="dialog" aria-live="polite"></div>
   </div>
   <div class="legend">
     <span><i></i>团队实地走访点位（5处）</span>
@@ -252,6 +296,7 @@ footer{
     <span><i class="ref"></i>方位参照绿地</span>
     <span>—— 红色虚线为建议步行动线，全程约3.5公里</span>
   </div>
+  <div class="maphint">点击地图上的 <b>①—⑤</b> 任一点位，圆圈旁即弹出该站实景与简介</div>
 </section>
 <section class="sec">
   <div class="sec-title">点位详录 <em>FIVE STOPS</em></div>
@@ -311,7 +356,7 @@ footer{
         <dt>特别体验</dt><dd>现场设油印体验，可亲手印制第一版《新青年》封面并加盖纪念章。我们认为这是全线最有效的"具身参与"设计——它让传播行为本身可被身体记住。</dd>
       </dl>
       <div style="margin-top:10px">
-        <span class="tag">油印体验</span><span class="tag">胡同深处·易错过</span><span class="tag">与红楼03展厅互为印证</span>
+        <span class="tag">油印体验</span><span class="tag">胡同深处·易错过</span><span class="tag">与红楼07展厅互为印证</span>
       </div>
     </div></div>
 
@@ -340,7 +385,7 @@ footer{
     "以现代设计理念展陈、不脱离历史史实"两项原则，将楼内 6 处历史场景完整复原并嵌入参观流线，
     旧址展厅与普通展室无缝衔接。此 6 处为纪念馆既定设置，其价值在于历史事件的原发地属性。<br>
     <strong>二是主题展厅。</strong>展览共设 67 个展室，采用"一室一专题、一室一方案"的个性化设计，
-    将宏观表达与微观呈现相结合。下文择取其中与"觉醒年代"关联度最高的三个展厅加以介绍。
+    将宏观表达与微观呈现相结合。下文择取其中与"觉醒年代"关联度最高的四个展厅加以介绍。
   </p>
 
   <div class="subtitle">一、六处原址复原空间<span>纪念馆既定设置 · 按觉醒叙事时序排列 · ★为与《觉醒年代》对应较密集者</span></div>
@@ -348,37 +393,37 @@ footer{
     <tr><th style="width:118px">空间</th><th style="width:200px">实地场景</th><th>空间概况</th><th style="width:215px">史实要点</th></tr>
     <tr>
       <td class="hall">陈独秀<br>文科学长室<span class="star">★</span></td>
-      <td class="ph" data-src="images/01-chenduxiu-office.jpg" data-cap="陈独秀文科学长室"></td>
+      <td class="ph" data-src="01-chenduxiu-office.jpg" data-cap="陈独秀文科学长室"></td>
       <td>复原陈独秀任北京大学文科学长期间的办公场景，是新文化运动在北大的行政中枢，《新青年》的组稿与编务多由此处发出。</td>
       <td>1916年12月26日，蔡元培就任北大校长当日即赴旅馆邀陈独秀出任文科学长；1917年1月《新青年》随之由上海迁京。1918年8月红楼建成后，陈独秀迁至此处办公。</td>
     </tr>
     <tr>
       <td class="hall">毛泽东<br>第二阅览室<span class="star">★</span></td>
-      <td class="ph" data-src="images/02-mao-reading-room.jpg" data-cap="毛泽东工作过的第二阅览室"></td>
+      <td class="ph" data-src="02-mao-reading-room.jpg" data-cap="毛泽东工作过的第二阅览室"></td>
       <td>位于一层西侧，又称新闻纸阅览室，室内复原登记台与报架，陈列当年所藏报刊的复制件。</td>
       <td>1918年10月至1919年3月，青年毛泽东经杨昌济介绍、由时任图书馆主任李大钊安排在此工作，登记新到报刊和读者姓名，管理15种中外文报纸，月薪8块银元。职务名称纪念馆说明牌记作"图书馆书记"，毛泽东本人及《毛泽东传》记作"图书馆助理员"。</td>
     </tr>
     <tr>
       <td class="hall">五四游行<br>筹备室<span class="star">★</span></td>
-      <td class="ph" data-src="images/03-may4th-prep.png" data-cap="五四游行筹备室"></td>
+      <td class="ph" data-src="03-may4th-prep.jpg" data-cap="五四游行筹备室"></td>
       <td>位于一层东侧，复原五四运动前夕北大学生制作旗帜、书写标语的现场，陈列"外争主权，内除国贼"等横幅标语。</td>
       <td>1919年5月4日，北大学生自红楼后操场集合出发，走上街头游行示威。学生领袖罗家伦起草的《北京全体学界通告》即在此写成。</td>
     </tr>
     <tr>
       <td class="hall">大教室</td>
-      <td class="ph" data-src="images/04-da-jiaoshi.jpg" data-cap="大教室"></td>
+      <td class="ph" data-src="04-da-jiaoshi.jpg" data-cap="大教室"></td>
       <td>位于二层西南角，为红楼内面积最大的教室，复原当年授课场景。李大钊、陈独秀、鲁迅均曾在此登台讲授。</td>
       <td>1920年起李大钊在此讲授《唯物史观》《社会主义与社会运动》，马克思主义理论首次被正式列入中国高等教育课程；同年8月鲁迅受聘北大讲师，在此讲授《中国小说史略》。</td>
     </tr>
     <tr>
       <td class="hall">李大钊<br>图书馆主任室<span class="star">★</span></td>
-      <td class="ph" data-src="images/05-lidazhao-office.jpg" data-cap="李大钊图书馆主任室"></td>
-      <td>位于一层东南角相连的两大间。室内陈设当年使用的文具与书籍，书柜陈列马克思主义著作，墙悬"铁肩担道义，妙手著文章"手书对联。此处亦为北京共产党早期组织的诞生地。</td>
+      <td class="ph" data-src="05-lidazhao-office.jpg" data-cap="李大钊图书馆主任室"></td>
+      <td>位于一层东南角相连的两大间。室内陈设当年使用的文具与书籍，书柜陈列马克思主义著作；会客一间的墙上悬挂表现1920年春李大钊与共产国际代表维经斯基在此会谈的画作，长桌与茶具即当年会见来客的场景。此处亦为北京共产党早期组织的诞生地。</td>
       <td>李大钊自1917年12月起任北京大学图书馆主任，1918年红楼落成后在此工作至1922年12月。1920年10月，李大钊、张申府、张国焘在此成立北京共产党小组，李大钊为负责人；11月定名中共北京支部，李大钊被推选为书记。</td>
     </tr>
     <tr>
       <td class="hall">登录室</td>
-      <td class="ph" data-src="images/06-denglushi.jpg" data-cap="登录室"></td>
+      <td class="ph" data-src="06-denglushi.jpg" data-cap="登录室"></td>
       <td>复原北大图书馆办理新到书刊登录的工作空间，呈现图书馆日常运转的一环。</td>
       <td>张申府曾在此工作。毛泽东在北大参加勤工俭学期间，也主要负责新到书刊的登录。</td>
     </tr>
@@ -388,22 +433,27 @@ footer{
     "59个专题展室"见于《北京日报》，展览设计单位清华美院则记作"68间展厅"。
     差异在于是否计入6处旧址复原空间、以及以沙盘集中展示31处旧址的专门展厅。本页采用官方通稿的67个展室。
   </div>
-  <div class="subtitle">二、三个重点展厅<span>与"觉醒年代"关联度最高的三个展室</span></div>
+  <div class="subtitle">二、四个重点展厅<span>与"觉醒年代"关联度最高的四个展室</span></div>
   <table class="inner">
     <tr><th style="width:118px">展厅</th><th style="width:200px">实地场景</th><th>展品与看点</th></tr>
     <tr>
       <td class="hall">03 展厅</td>
-      <td class="ph" data-src="images/hall-03-xinqingnian.jpg" data-cap="03展厅《新青年》原件"></td>
-      <td>陈列《新青年》杂志原件，展柜中泛黄的纸页记录着百年前的思想激荡。展览完整展出全部63期《新青年》，其中第5卷第5号刊载《庶民的胜利》《Bolshevism的胜利》，第6卷第5号刊载《我的马克思主义观》。此处与箭杆胡同《新青年》编辑部旧址互为印证，一处见编辑现场，一处见刊行成果。</td>
+      <td class="ph" data-src="hall-03-industrial-workers.jpg" data-cap="03展厅近代产业工人的壮大"></td>
+      <td>位于展览第一部分，主题为近代民族资本主义的发展与中国早期产业工人阶级的形成。展板以门头沟煤矿、京张铁路南口机厂等近代工矿企业的历史影像，配合"中国早期产业工人由1894年的10万人发展到1920年的195万人"这一组数据，并以大字数据装置呈现北京地区工厂数量的增长；展柜陈列近代产业工人使用的劳作器具。此室交代了工人阶级登上历史舞台的社会基础，是理解后续马克思主义为何能在中国生根的前提，观众却常因它不含名人名物而快步走过。</td>
+    </tr>
+    <tr>
+      <td class="hall">07 展厅</td>
+      <td class="ph" data-src="hall-07-xinqingnian.jpg" data-cap="07展厅《新青年》杂志专题陈列"></td>
+      <td>《新青年》杂志专题陈列。整面墙以红框逐期展示各卷各号封面，中央为放大的第二卷第一号封面复制件，可见"陈独秀先生主撰""上海群益书社印行"与法文刊名"LA JEUNESSE"——1916年9月，《青年杂志》自本期起改名《新青年》。右侧另设专号陈列，下方平柜摊开刊物内页与装订本。其中第5卷第5号刊载《庶民的胜利》《Bolshevism的胜利》，第6卷第5号刊载《我的马克思主义观》。此处与箭杆胡同《新青年》编辑部旧址互为印证，一处见编辑现场，一处见刊行成果。</td>
     </tr>
     <tr>
       <td class="hall">30 展厅</td>
-      <td class="ph" data-src="images/hall-30-lidazhao-statue.jpg" data-cap="30展厅李大钊雕塑"></td>
+      <td class="ph" data-src="hall-30-lidazhao-statue.jpg" data-cap="30展厅李大钊雕塑"></td>
       <td>设李大钊雕塑，位于展线中"撒播革命火种、打造马克思主义在中国早期传播主阵地"这一部分，是全展观众停留与合影最集中的点位之一。</td>
     </tr>
     <tr>
       <td class="hall">46 展厅</td>
-      <td class="ph" data-src="images/hall-46-relief.jpg" data-cap="46展厅北京共产党小组浮雕群像"></td>
+      <td class="ph" data-src="hall-46-relief.jpg" data-cap="46展厅北京共产党小组浮雕群像"></td>
       <td>设北京共产党小组浮雕群像，以群像形式呈现北京早期党组织的成员构成。北京支部成立后先后吸收邓中夏、高君宇、何孟雄、缪伯英等人加入，并派员赴天津、唐山、济南等地协助建立党团组织。</td>
     </tr>
   </table>
@@ -411,13 +461,13 @@ footer{
   <div class="note">
     <strong>说明。</strong>《觉醒年代》的叙事时间线与红楼展陈时序高度吻合，
     剧中诸多场景在展厅内均有对应的实物或旧址，相当数量的青年观众系带着剧集印象前来参观。
-    目前展陈尚缺少专门用于区分影视艺术加工与真实史实的导览媒介，青少年观众易将剧情与史实混同。
     本页"★"仅标示与剧集对应关系较为密集的空间；"史实要点"栏所列内容均依据公开史料与纪念馆说明牌，
     不涉及剧集情节，具体细节请以展厅说明牌为准。
   </div>
   <div class="note" style="border-left-color:#8a7f6d">
-    <strong>图片说明。</strong>"实地场景"列共设 9 个图片位，对应六处原址复原空间与三个重点展厅。
-    实拍图正在补拍，尚未置入，图片位暂以占位框显示。馆内部分区域限制拍摄。
+    <strong>图片说明。</strong>"实地场景"列的十张照片，为团队在馆内实地拍摄。馆内部分区域限制拍摄。
+    步行地图点位气泡中，北大红楼正门一张为团队拍摄；其余四处旧址外景图为网络公开图片，
+    非团队拍摄，仅作方位识别之用，版权归原作者所有。
   </div>
 </section>
 
@@ -462,11 +512,11 @@ footer{
   </div>
   <div class="info" style="grid-template-columns:1fr">
     <div>
-      <h4>给带队讲解者的三点提醒（来自本次调研发现）</h4>
+      <h4>三条观展线索</h4>
       <ul>
-        <li><strong>先分层，再讲解。</strong>面向小学生宜结合课本课文与《觉醒年代》人物故事切入；面向大学生宜设课题式研学，让青年成为历史阐释的主体而非被教育者。</li>
-        <li><strong>务必区分剧情与史实。</strong>我们访谈的一位小学生受访者能复述剧中李大钊遭受迫害的情节，却把剧情、课本与展馆实物混作一体。情感入口若无"祛魅"环节，会变成史实混淆的入口。</li>
-        <li><strong>共情为先，史实为本。</strong>用旧址复原与文物实物建立情感连接，同时明确划定文艺创作与真实历史的边界——年轻化传播不是迎合娱乐潮流，而是破除距离感与符号化。</li>
+        <li><strong>顺着"从思想到组织"看。</strong>全线的内在顺序是：先有报刊与文本（《新青年》专题陈列、箭杆胡同编辑部旧址），再有讲台与阅览室里的具体人（六处原址复原空间），最后才有浮雕群像上那一张张名字。把这条线捋顺，"觉醒"就不再是一个抽象的词，而是一段可以追踪的过程。</li>
+        <li><strong>留意那些容易走过的房间。</strong>03 展厅讲的是近代产业工人的壮大，没有名人名物，却是理解后面一切的社会前提；登录室只有书架、算盘与印章，却是马克思主义书刊真正进入这座图书馆的入口。展览的重量并不总在最醒目的地方。</li>
+        <li><strong>把影视剧当入口，把说明牌当准绳。</strong>带着《觉醒年代》的印象来看展是很自然的事，剧中不少场景在馆内都有对应的实物或旧址。只是剧集终究有文艺加工，馆内说明牌才是史实依据——从"被故事打动"走到"知道确实发生过什么"，这一步值得自己走一遍。</li>
       </ul>
     </div>
   </div>
@@ -480,18 +530,139 @@ footer{
 </footer>
 
 <script>
+/* 五个点位的气泡卡片内容 */
+var STOPS = {
+  1:{title:'中法大学旧址',addr:'东城区东黄城根北街甲20号',
+     lead:'1920年由李石曾等人筹办。全线唯一以"理论传播"为主轴的展馆，设"马克思主义在中国早期传播专题展"。先弄清马克思主义如何进入中国，再去红楼看它如何落地为组织行动。',
+     shot:['site-01-zhongfa-univ.jpg','中法大学旧址外景']},
+  2:{title:'北大红楼',addr:'东城区五四大街29号　｜　全线核心',
+     lead:'始建于1916年。新文化运动主阵地、五四运动策源地，也是北京共产党小组的直接诞生地。"光辉伟业 红色序章"主题展覆盖1—3层共67个展室，六处原址复原空间完整嵌入参观流线。',
+     shot:['site-02-red-building.jpg','北大红楼正门（团队拍摄）']},
+  3:{title:'北大二院旧址',addr:'东城区沙滩后街55号院',
+     lead:'原北京大学第二院（理科）所在地。设"伟大开篇——中国共产党早期北京组织专题展"，梳理从北京共产党小组到中共北京支部的组织脉络。全线互动性最强的一站。',
+     shot:['site-03-beida-eryuan.jpg','北大二院旧址外景']},
+  4:{title:'《新青年》编辑部旧址',addr:'东城区箭杆胡同20号（陈独秀旧居）',
+     lead:'1917年1月《新青年》随陈独秀由上海迁京，落脚于这条不足50米的死胡同尽头。三间南房即编辑部，《文学改良刍议》《文学革命论》《狂人日记》均由此发出。现场设油印体验。',
+     shot:['site-04-jiangan-hutong.jpg','箭杆胡同20号院门']},
+  5:{title:'来今雨轩',addr:'东城区中山公园内',
+     lead:'建于1915年。文学研究会、少年中国学会等进步团体的集会与聚谈之地——先驱者的思想交锋并不只发生在讲台上。前四站是"阵地"，这一站是"日常"。',
+     shot:['site-05-laijinyuxuan.jpg','来今雨轩外景']}
+};
+
+var bubble = document.getElementById('mapBubble');
+var mapbox = bubble ? bubble.parentNode : null;
+var current = null;
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+function buildBubble(i){
+  var d = STOPS[i];
+  var html = '<button class="close" type="button" aria-label="关闭">×</button>'
+    + '<div class="bt">点位 ' + i + ' / 5</div>'
+    + '<h4>' + esc(d.title) + '</h4>'
+    + '<div class="addr">' + esc(d.addr) + '</div>'
+    + '<div class="shotslot"></div>'
+    + '<div class="lead">' + esc(d.lead) + '</div>'
+    + '<a class="more" href="#s' + i + '">完整详录 ↓</a>';
+  bubble.innerHTML = html;
+
+  // 图片存在才显示，否则显示虚线提示，避免出现破图
+  var slot = bubble.querySelector('.shotslot');
+  var probe = new Image();
+  probe.onload = function(){
+    slot.innerHTML = '<img src="' + esc(d.shot[0]) + '" alt="' + esc(d.shot[1]) + '">'
+                   + '<div class="cap">' + esc(d.shot[1]) + '</div>';
+    place(i);
+  };
+  probe.onerror = function(){
+    slot.innerHTML = '<div class="noshot">' + esc(d.shot[1]) + '</div>';
+    place(i);
+  };
+  probe.src = d.shot[0];
+
+  bubble.querySelector('.close').addEventListener('click', closeBubble);
+  bubble.querySelector('.more').addEventListener('click', function(e){
+    e.preventDefault();
+    var card = document.getElementById('s' + i);
+    if(card) card.scrollIntoView({behavior:'smooth', block:'center'});
+  });
+}
+
+/* 把气泡定位到该点位圆圈旁边；空间不足时改到圆圈另一侧，窄屏时改到圆圈下方 */
+function place(i){
+  var pin = document.querySelector('.pin[data-i="' + i + '"] circle');
+  if(!pin || !mapbox) return;
+  var mb = mapbox.getBoundingClientRect();
+  var pr = pin.getBoundingClientRect();
+  var cx = pr.left - mb.left + pr.width/2;
+  var cy = pr.top  - mb.top  + pr.height/2;
+  var r  = pr.width/2;
+  var narrow = mb.width < 620;
+
+  bubble.classList.toggle('below', narrow);
+  var bw = bubble.offsetWidth, bh = bubble.offsetHeight;
+
+  if(narrow){
+    bubble.style.left = ''; bubble.style.right = '';
+    var t = cy + r + 12;
+    if(t + bh > mb.height - 8) t = Math.max(8, cy - r - 12 - bh);
+    bubble.style.top = t + 'px';
+    return;
+  }
+  var left = cx + r + 14;
+  if(left + bw > mb.width - 10) left = cx - r - 14 - bw;
+  if(left < 10) left = 10;
+  var top = cy - bh/2;
+  if(top < 8) top = 8;
+  if(top + bh > mb.height - 8) top = Math.max(8, mb.height - bh - 8);
+  bubble.style.left = left + 'px';
+  bubble.style.right = '';
+  bubble.style.top = top + 'px';
+}
+
+function closeBubble(){
+  current = null;
+  if(bubble){ bubble.classList.remove('on'); bubble.innerHTML=''; }
+  document.querySelectorAll('.pin').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.stop').forEach(function(s){s.classList.remove('on')});
+}
+
 document.querySelectorAll('.pin').forEach(function(g){
-  g.style.cursor='pointer';
-  g.addEventListener('click',function(){
-    var card=document.getElementById('s'+g.dataset.i);
-    if(!card) return;
+  g.setAttribute('tabindex','0');
+  g.setAttribute('role','button');
+  var i = g.dataset.i;
+  g.setAttribute('aria-label', '点位 ' + i + '：' + (STOPS[i] ? STOPS[i].title : ''));
+  function activate(e){
+    if(e) e.stopPropagation();
+    if(current === i){ closeBubble(); return; }
+    current = i;
+    document.querySelectorAll('.pin').forEach(function(p){p.classList.remove('active')});
+    g.classList.add('active');
     document.querySelectorAll('.stop').forEach(function(s){s.classList.remove('on')});
-    card.classList.add('on');
-    card.scrollIntoView({behavior:'smooth',block:'center'});
+    var card = document.getElementById('s' + i);
+    if(card) card.classList.add('on');
+    bubble.classList.add('on');
+    buildBubble(i);
+    place(i);
+  }
+  g.addEventListener('click', activate);
+  g.addEventListener('keydown', function(e){
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); activate(e); }
   });
 });
 
-// 实地场景图：图片存在则显示，缺失则显示占位框与应放入的文件名
+// 点击地图空白处或按 Esc 关闭气泡；窗口尺寸变化时重新定位
+if(mapbox){
+  mapbox.addEventListener('click', function(e){
+    if(current && !e.target.closest('.pin') && !e.target.closest('.bubble')) closeBubble();
+  });
+}
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape' && current) closeBubble();
+});
+window.addEventListener('resize', function(){ if(current) place(current); });
+
+// 实地场景图加载
 document.querySelectorAll('td.ph').forEach(function(td){
   var src=td.dataset.src, cap=td.dataset.cap||'';
   var probe=new Image();
@@ -503,7 +674,7 @@ document.querySelectorAll('td.ph').forEach(function(td){
   probe.onerror=function(){
     var d=document.createElement('div');
     d.className='slot';
-    d.innerHTML='实地场景图（待补）<b>'+src+'</b>';
+    d.innerHTML='实地场景图';
     td.appendChild(d);
   };
   probe.src=src;
